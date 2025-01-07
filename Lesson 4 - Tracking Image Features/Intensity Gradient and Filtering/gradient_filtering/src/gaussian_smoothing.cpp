@@ -21,6 +21,11 @@ void gaussianSmoothing1()
     cv::Mat kernel = cv::Mat(5, 5, CV_32F, gauss_data);
   
   	// TODO: Divide each element of the kernel by the sum of all the values in the kernel.
+    // how to sum matrix in openCV https://stackoverflow.com/a/21875049
+    double sum = cv::sum(kernel)[0];
+
+    // how to divide matrix by a scalar https://stackoverflow.com/a/15438756
+    kernel = kernel / sum;
 
     // apply filter
     cv::Mat result;

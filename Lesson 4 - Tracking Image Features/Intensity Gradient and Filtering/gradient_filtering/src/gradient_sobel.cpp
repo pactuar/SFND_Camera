@@ -16,7 +16,7 @@ void gradientSobel()
   
   	// Step 1 - load image from file
     cv::Mat img;
-    img = cv::imread("./img1.png");
+    img = cv::imread("../images/img1.png");
 
     //  Step 2 - convert image to grayscale
     cv::Mat imgGray;
@@ -36,6 +36,23 @@ void gradientSobel()
     string windowName = "Sobel operator (x-direction)";
     cv::namedWindow( windowName, 1 ); // create window 
     cv::imshow(windowName, result_x);
+    cv::waitKey(0); // wait for keyboard input before continuing
+
+    // DO IT for Y too
+    //  Step 3 - create filter kernel
+    float sobel_y[9] = {-1, -2, -1,
+                         0,  0,  0, 
+                        +1, +2, +1};
+    cv::Mat kernel_y = cv::Mat(3, 3, CV_32F, sobel_y);
+
+    //  Step 4 - apply filter
+    cv::Mat result_y;
+    cv::filter2D(imgGray, result_y, -1, kernel_y, cv::Point(-1, -1), 0, cv::BORDER_DEFAULT);
+
+    //  Step 5 - show result
+    string windowName2 = "Sobel operator (y-direction)";
+    cv::namedWindow( windowName2, 1 ); // create window 
+    cv::imshow(windowName2, result_y);
     cv::waitKey(0); // wait for keyboard input before continuing
   
 }
