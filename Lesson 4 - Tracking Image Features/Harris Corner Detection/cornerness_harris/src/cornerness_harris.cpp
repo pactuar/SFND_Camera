@@ -29,7 +29,7 @@ void cornernessHarris()
 
     // visualize results
     string windowName = "Harris Corner Detector Response Matrix";
-    cv::namedWindow(windowName, 4);
+    cv::namedWindow(windowName, 1);
     cv::imshow(windowName, dst_norm_scaled);
     cv::waitKey(0);
 
@@ -37,6 +37,53 @@ void cornernessHarris()
     // and perform a non-maximum suppression (NMS) in a local neighborhood around 
     // each maximum. The resulting coordinates shall be stored in a list of keypoints 
     // of the type `vector<cv::KeyPoint>`.
+    std::vector<cv::KeyPoint> keypoints;
+
+    int sw_size = 7;  //sliding window size, should be odd
+    int sw_dist = floor(sw_size / 2);
+
+    //create output image
+    int nrows = dst_norm_scaled.rows;
+    int ncols = dst_norm_scaled.cols;
+    cv::Mat result_img = cv::Mat::zeros(nrows, ncols, CV_8U);
+
+    for (int r = sw_dist; r < nrows - sw_dist - 1; r++)
+    {
+        for (int c = sw_dist; c < ncols - sw_dist - 1; c++)
+        {
+            unsigned int max_val{0};
+
+            for (int rs = r - sw_dist; rs <= r + sw_dist; rs++)
+            {
+                for (int cs = c - sw_dist; cs <= c + sw_dist; cs++)
+                {
+                    unsigned int new_val = dst_norm_scaled.at<unsigned int>(rs, cs);
+                    if (new_val > max_val)
+                        max_val = new_val;
+                }
+            }
+
+            // if the current pixel is the max val then save as local maximum
+            if (dst_norm_scaled.at<unsigned int>(r, c) == max_val)
+            {
+                keypoints.push_back(cv::KeyPoint(c, r, 2.0));
+                result_img.at<unsigned int>(r, c) = max_val;
+            }
+            else
+            {
+                result_img.at<unsigned int>(r, c) = 0;
+            }
+                
+        }
+    }
+
+    // show NMS image
+    std::string windowName2 = "NMS Result Image";
+    cv::namedWindow(windowName2, 1);
+    //cv::Mat visImage = dst_norm_scaled.clone();
+    //cv::drawKeypoints(dst_norm_scaled, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    cv::imshow(windowName2, result_img);
+    cv::waitKey(0);
 
 }
 
