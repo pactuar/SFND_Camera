@@ -51,22 +51,22 @@ void cornernessHarris()
     {
         for (int c = sw_dist; c < ncols - sw_dist - 1; c++)
         {
-            unsigned int max_val{0};
+            unsigned int max_val = 100;
 
             for (int rs = r - sw_dist; rs <= r + sw_dist; rs++)
             {
                 for (int cs = c - sw_dist; cs <= c + sw_dist; cs++)
                 {
-                    unsigned int new_val = dst_norm_scaled.at<unsigned int>(rs, cs);
+                    unsigned int new_val = (int)dst_norm.at<float>(rs, cs);
                     if (new_val > max_val)
                         max_val = new_val;
                 }
             }
 
             // if the current pixel is the max val then save as local maximum
-            if (dst_norm_scaled.at<unsigned int>(r, c) == max_val)
+            if ((int)dst_norm.at<float>(r, c) == max_val)
             {
-                keypoints.push_back(cv::KeyPoint(c, r, 2.0));
+                keypoints.push_back(cv::KeyPoint(c, r, 2*apertureSize, -1.0F, (int)dst_norm.at<float>(r, c)));
                 result_img.at<unsigned int>(r, c) = max_val;
             }
             else
@@ -80,9 +80,9 @@ void cornernessHarris()
     // show NMS image
     std::string windowName2 = "NMS Result Image";
     cv::namedWindow(windowName2, 1);
-    //cv::Mat visImage = dst_norm_scaled.clone();
-    //cv::drawKeypoints(dst_norm_scaled, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-    cv::imshow(windowName2, result_img);
+    cv::Mat visImage = dst_norm_scaled.clone();
+    cv::drawKeypoints(dst_norm_scaled, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    cv::imshow(windowName2, visImage);
     cv::waitKey(0);
 
 }
