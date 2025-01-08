@@ -39,10 +39,10 @@ void cornernessHarris()
     // of the type `vector<cv::KeyPoint>`.
     std::vector<cv::KeyPoint> keypoints;
 
-    int sw_size = 7;  //sliding window size, should be odd
+    int sw_size = 9;  //sliding window size, should be odd ( and bigger than the aperature?)
     int sw_dist = floor(sw_size / 2);
 
-    //create output image
+    //create output image and find keypoints
     int nrows = dst_norm_scaled.rows;
     int ncols = dst_norm_scaled.cols;
     cv::Mat result_img = cv::Mat::zeros(nrows, ncols, CV_8U);
